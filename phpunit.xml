@@ -1,0 +1,23 @@
+<phpunit bootstrap="vendor/autoload.php">
+    <testsuites>
+        <testsuite name="Check in domain unit tests">
+            <directory>test/unit/Domain</directory>
+        </testsuite>
+        <testsuite name="Check in domain component tests">
+            <directory>test/component/Domain</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src/Domain</directory>
+            <exclude>
+                <directory suffix=".php">src/Domain/Command</directory>
+                <directory suffix=".php">src/Domain/Event</directory>
+            </exclude>
+        </whitelist>
+
+    </filter>
+    <logging>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="true"/>
+    </logging>
+</phpunit>
