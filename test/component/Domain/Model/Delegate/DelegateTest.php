@@ -6,6 +6,8 @@ use Carnage\Cqrs\Testing\AbstractBusTest;
 use ConferenceTools\Checkin\Domain\Command\Delegate\RegisterDelegate;
 use ConferenceTools\Checkin\Domain\CommandHandler\Delegate as DelegateCommandHandler;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateRegistered;
+use ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo;
+use ConferenceTools\Checkin\Domain\ValueObject\Ticket;
 
 class DelegateTest extends AbstractBusTest
 {
@@ -16,7 +18,9 @@ class DelegateTest extends AbstractBusTest
         $sut = new DelegateCommandHandler($this->repository, $this->idGenerator);
         $this->setupLogger($sut);
 
-        $message = new RegisterDelegate('ted', 'banks', 'ted.banks@gmail.com', 'pid', 'tid');
+        $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
+        $ticket = new Ticket('pid', 'tid');
+        $message = new RegisterDelegate($delegate, $ticket);
         $sut->handle($message);
 
         self::assertCount(1, $this->messageBus->messages);
@@ -25,10 +29,7 @@ class DelegateTest extends AbstractBusTest
 
         self::assertInstanceOf(DelegateRegistered::class, $domainMessage);
         self::assertEquals(1, $domainMessage->getDelegateId());
-        self::assertEquals('ted', $domainMessage->getFirstName());
-        self::assertEquals('banks', $domainMessage->getLastName());
-        self::assertEquals('ted.banks@gmail.com', $domainMessage->getEmail());
-        self::assertEquals('pid', $domainMessage->getPurchaseId());
-        self::assertEquals('tid', $domainMessage->getTicketId());
+        self::assertSame($delegate, $domainMessage->getDelegateInfo());
+        self::assertSame($ticket, $domainMessage->getTicket());
     }
 }

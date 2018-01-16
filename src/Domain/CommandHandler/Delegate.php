@@ -29,11 +29,8 @@ class Delegate extends AbstractMethodNameMessageHandler
     {
         $delegate = DelegateModel::register(
             $this->idGenerator->generateIdentity(),
-            $command->getFirstName(),
-            $command->getLastName(),
-            $command->getEmail(),
-            $command->getPurchaseId(),
-            $command->getTicketId()
+            $command->getDelegateInfo(),
+            $command->getTicket()
         );
 
         $this->repository->save($delegate);

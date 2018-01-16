@@ -6,6 +6,8 @@ namespace ConferenceTools\Checkin\Domain\Model\Delegate;
 
 use Carnage\Cqrs\Aggregate\AbstractAggregate;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateRegistered;
+use ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo;
+use ConferenceTools\Checkin\Domain\ValueObject\Ticket;
 
 class Delegate extends AbstractAggregate
 {
@@ -18,14 +20,11 @@ class Delegate extends AbstractAggregate
 
     public static function register(
         string $id,
-        string $firstName,
-        string $lastName,
-        string $email,
-        string $purchaseId,
-        string $ticketId
+        DelegateInfo $delegateInfo,
+        Ticket $ticket
     ) {
         $instance = new static();
-        $instance->apply(new DelegateRegistered($id, $firstName, $lastName, $email, $purchaseId, $ticketId));
+        $instance->apply(new DelegateRegistered($id, $delegateInfo, $ticket));
 
         return $instance;
     }

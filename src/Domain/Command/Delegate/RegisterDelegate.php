@@ -1,85 +1,37 @@
 <?php
 
-
 namespace ConferenceTools\Checkin\Domain\Command\Delegate;
 
-
 use Carnage\Cqrs\Command\CommandInterface;
+use ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo;
+use ConferenceTools\Checkin\Domain\ValueObject\Ticket;
 
 class RegisterDelegate implements CommandInterface
 {
     /**
-     * @var string
+     * @var DelegateInfo
      */
-    private $firstName;
+    private $delegateInfo;
     /**
-     * @var string
+     * @var Ticket
      */
-    private $lastName;
-    /**
-     * @var string
-     */
-    private $email;
-    /**
-     * @var string
-     */
-    private $purchaseId;
-    /**
-     * @var string
-     */
-    private $ticketId;
+    private $ticket;
 
     public function __construct(
-        string $firstName,
-        string $lastName,
-        string $email,
-        string $purchaseId,
-        string $ticketId
+        DelegateInfo $delegateInfo,
+        Ticket $ticket
     ) {
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-        $this->email = $email;
-        $this->purchaseId = $purchaseId;
-        $this->ticketId = $ticketId;
+        $this->delegateInfo = $delegateInfo;
+        $this->ticket = $ticket;
     }
 
-    /**
-     * @return string
-     */
-    public function getFirstName(): string
+    public function getDelegateInfo(): DelegateInfo
     {
-        return $this->firstName;
+        return $this->delegateInfo;
     }
 
-    /**
-     * @return string
-     */
-    public function getLastName(): string
+    public function getTicket(): Ticket
     {
-        return $this->lastName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPurchaseId(): string
-    {
-        return $this->purchaseId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTicketId(): string
-    {
-        return $this->ticketId;
+        return $this->ticket;
     }
 }
