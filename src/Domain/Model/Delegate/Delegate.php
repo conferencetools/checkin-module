@@ -21,10 +21,11 @@ class Delegate extends AbstractAggregate
     public static function register(
         string $id,
         DelegateInfo $delegateInfo,
-        Ticket $ticket
+        Ticket $ticket,
+        string $purchaserEmail
     ) {
         $instance = new static();
-        $instance->apply(new DelegateRegistered($id, $delegateInfo, $ticket));
+        $instance->apply(new DelegateRegistered($id, $delegateInfo, $ticket, $purchaserEmail));
 
         return $instance;
     }

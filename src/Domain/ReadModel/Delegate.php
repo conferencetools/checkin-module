@@ -20,8 +20,12 @@ class Delegate
     private $purchaseId;
 
     private $ticketId;
+    /**
+     * @var string
+     */
+    private $purchaserEmail;
 
-    public function __construct(string $delegateId, DelegateInfo $delegateInfo, Ticket $ticket)
+    public function __construct(string $delegateId, DelegateInfo $delegateInfo, Ticket $ticket, string $purchaserEmail)
     {
         $this->delegateId = $delegateId;
         $this->firstName = $delegateInfo->getFirstName();
@@ -29,6 +33,7 @@ class Delegate
         $this->email = $delegateInfo->getEmail();
         $this->purchaseId = $ticket->getPurchaseId();
         $this->ticketId = $ticket->getTicketId();
+        $this->purchaserEmail = $purchaserEmail;
     }
 
     public function getId(): int
@@ -64,5 +69,10 @@ class Delegate
     public function getTicketId(): string
     {
         return $this->ticketId;
+    }
+
+    public function getPurchaserEmail(): string
+    {
+        return $this->purchaserEmail;
     }
 }

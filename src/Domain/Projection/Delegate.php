@@ -18,7 +18,12 @@ class Delegate extends AbstractMethodNameMessageHandler
 
     public function handleDelegateRegistered(DelegateRegistered $event)
     {
-        $entity = new DelegateModel($event->getDelegateId(), $event->getDelegateInfo(), $event->getTicket());
+        $entity = new DelegateModel(
+            $event->getDelegateId(),
+            $event->getDelegateInfo(),
+            $event->getTicket(),
+            $event->getPurchaserEmail()
+        );
         $this->repository->add($entity);
         $this->repository->commit();
     }

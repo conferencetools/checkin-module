@@ -21,15 +21,21 @@ class DelegateRegistered implements EventInterface
      * @var Ticket
      */
     private $ticket;
+    /**
+     * @var string
+     */
+    private $purchaserEmail;
 
     public function __construct(
         string $delegateId,
         DelegateInfo $delegateInfo,
-        Ticket $ticket
+        Ticket $ticket,
+        string $purchaserEmail
     ) {
         $this->delegateId = $delegateId;
         $this->delegateInfo = $delegateInfo;
         $this->ticket = $ticket;
+        $this->purchaserEmail = $purchaserEmail;
     }
 
     public function getDelegateId(): string
@@ -45,5 +51,10 @@ class DelegateRegistered implements EventInterface
     public function getTicket(): Ticket
     {
         return $this->ticket;
+    }
+
+    public function getPurchaserEmail(): string
+    {
+        return $this->purchaserEmail;
     }
 }

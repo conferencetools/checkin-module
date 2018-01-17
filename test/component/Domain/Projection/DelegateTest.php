@@ -24,9 +24,9 @@ class TaskTest extends TestCase
         $sut = new Delegate($repository);
         $this->setupLogger($sut);
 
-        $sut->handle(new DelegateRegistered('did', $delegate, $ticket));
+        $sut->handle(new DelegateRegistered('did', $delegate, $ticket, 'admin@company.com'));
 
-        $expected = new DelegateReadModel('did', $delegate, $ticket);
+        $expected = new DelegateReadModel('did', $delegate, $ticket, 'admin@company.com');
         self::assertEquals($expected, $repository->get(0));
     }
 

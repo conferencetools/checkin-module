@@ -20,7 +20,7 @@ class DelegateTest extends AbstractBusTest
 
         $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
         $ticket = new Ticket('pid', 'tid');
-        $message = new RegisterDelegate($delegate, $ticket);
+        $message = new RegisterDelegate($delegate, $ticket, 'admin@company.com');
         $sut->handle($message);
 
         self::assertCount(1, $this->messageBus->messages);
@@ -31,5 +31,6 @@ class DelegateTest extends AbstractBusTest
         self::assertEquals(1, $domainMessage->getDelegateId());
         self::assertSame($delegate, $domainMessage->getDelegateInfo());
         self::assertSame($ticket, $domainMessage->getTicket());
+        self::assertEquals('admin@company.com', $domainMessage->getPurchaserEmail());
     }
 }

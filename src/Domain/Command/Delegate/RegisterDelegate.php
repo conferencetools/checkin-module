@@ -17,12 +17,16 @@ class RegisterDelegate implements CommandInterface
      */
     private $ticket;
 
+    private $purchaserEmail;
+
     public function __construct(
         DelegateInfo $delegateInfo,
-        Ticket $ticket
+        Ticket $ticket,
+        string $purchaserEmail
     ) {
         $this->delegateInfo = $delegateInfo;
         $this->ticket = $ticket;
+        $this->purchaserEmail = $purchaserEmail;
     }
 
     public function getDelegateInfo(): DelegateInfo
@@ -33,5 +37,10 @@ class RegisterDelegate implements CommandInterface
     public function getTicket(): Ticket
     {
         return $this->ticket;
+    }
+
+    public function getPurchaserEmail(): string
+    {
+        return $this->purchaserEmail;
     }
 }
