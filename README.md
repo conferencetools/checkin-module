@@ -1,5 +1,5 @@
 # Conference Tools: Check in
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/conferencetools/checkin-module/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/conferencetools/checkin-module/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/conferencetools/checking-module/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/conferencetools/checkin-module/?branch=master) 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/conferencetools/checkin-module/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/conferencetools/checkin-module/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/conferencetools/checkin-module/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/conferencetools/checkin-module/?branch=master) 
 
 This is a check in module designed to be used as a door list for conferences. 
  
