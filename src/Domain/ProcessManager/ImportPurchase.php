@@ -5,6 +5,7 @@ namespace ConferenceTools\Checkin\Domain\ProcessManager;
 use Carnage\Cqrs\MessageHandler\AbstractMethodNameMessageHandler;
 use Carnage\Cqrs\Persistence\EventStore\NotFoundException;
 use Carnage\Cqrs\Persistence\Repository\RepositoryInterface;
+use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateRegistered;
 use ConferenceTools\Checkin\Domain\Event\Purchase\TicketAssigned;
 use ConferenceTools\Checkin\Domain\Event\Purchase\TicketPurchasePaid;
 use ConferenceTools\Checkin\Domain\Process\ImportPurchase as ImportPurchaseProcess;
@@ -29,6 +30,13 @@ class ImportPurchase extends AbstractMethodNameMessageHandler
     {
         $process = $this->loadProcess($event->getPurchaseId());
         $process->ticketPurchasePaid($event);
+        $this->repository->save($process);
+    }
+
+    protected function handleDelegateRegistered(DelegateRegistered $event)
+    {
+        $process = $this->loadProcess($event->getTicket()->getPurchaseId());
+        $process->delegateRegistered($event);
         $this->repository->save($process);
     }
 

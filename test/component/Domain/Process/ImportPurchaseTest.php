@@ -4,6 +4,7 @@ namespace ConferenceTools\Checkin\Domain\Process;
 
 use Carnage\Cqrs\Testing\AbstractBusTest;
 use ConferenceTools\Checkin\Domain\Command\Delegate\RegisterDelegate;
+use ConferenceTools\Checkin\Domain\Command\Delegate\UpdateDelegateInformation;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateRegistered;
 use ConferenceTools\Checkin\Domain\Event\Purchase\TicketAssigned;
 use ConferenceTools\Checkin\Domain\Event\Purchase\TicketPurchasePaid;
@@ -64,6 +65,35 @@ class ImportPurchaseTest extends AbstractBusTest
         $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
         $ticket = new Ticket('pid', 'tid');
         $expected = new RegisterDelegate($delegate, $ticket, 'admin@company.com');
+
+        self::assertEquals($expected, $domainMessage);
+    }
+
+    public function testUpdateDelegateInfo()
+    {
+        $sut = new ImportPurchaseProcessManager($this->repository);
+        $this->setupLogger($sut);
+
+        $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
+        $ticket = new Ticket('pid', 'tid');
+        $message = new TicketAssigned($delegate, $ticket, 'admin@company.com');
+        $sut->handle($message);
+
+        $message = new TicketPurchasePaid('pid', 'admin@company.com');
+        $sut->handle($message);
+
+        $sut->handle(new DelegateRegistered('did', $delegate, $ticket, 'admin@company.com'));
+
+        $delegate = new DelegateInfo('ben', 'franks', 'ben.franks@gmail.com');
+        $ticket = new Ticket('pid', 'tid');
+        $message = new TicketAssigned($delegate, $ticket, 'admin@company.com');
+        $sut->handle($message);
+
+        self::assertCount(5, $this->messageBus->messages);
+        $domainMessage = $this->messageBus->messages[4]->getEvent();
+
+        $delegate = new DelegateInfo('ben', 'franks', 'ben.franks@gmail.com');
+        $expected = new UpdateDelegateInformation('did', $delegate);
 
         self::assertEquals($expected, $domainMessage);
     }
