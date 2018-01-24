@@ -75,4 +75,11 @@ class Delegate
     {
         return $this->purchaserEmail;
     }
+
+    public function updateDelegateInfo(DelegateInfo $delegateInfo)
+    {
+        $this->firstName = $delegateInfo->getFirstName();
+        $this->lastName = $delegateInfo->getLastName();
+        $this->email = $delegateInfo->getEmail();
+    }
 }
