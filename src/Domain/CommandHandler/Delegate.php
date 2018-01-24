@@ -6,6 +6,7 @@ use Carnage\Cqrs\Aggregate\Identity\GeneratorInterface;
 use Carnage\Cqrs\MessageHandler\AbstractMethodNameMessageHandler;
 use Carnage\Cqrs\Persistence\Repository\RepositoryInterface;
 use ConferenceTools\Checkin\Domain\Command\Delegate\RegisterDelegate;
+use ConferenceTools\Checkin\Domain\Command\Delegate\UpdateDelegateInformation;
 use ConferenceTools\Checkin\Domain\Model\Delegate\Delegate as DelegateModel;
 
 class Delegate extends AbstractMethodNameMessageHandler
@@ -34,6 +35,13 @@ class Delegate extends AbstractMethodNameMessageHandler
             $command->getPurchaserEmail()
         );
 
+        $this->repository->save($delegate);
+    }
+
+    protected function handleUpdateDelegateInformation(UpdateDelegateInformation $command)
+    {
+        $delegate = $this->repository->load($command->getDelegateId());
+        $delegate->updateDelegateInformation($command->getDelegateInfo());
         $this->repository->save($delegate);
     }
 }
