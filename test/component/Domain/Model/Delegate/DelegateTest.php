@@ -3,9 +3,11 @@
 namespace ConferenceTools\Checkin\Domain\Model\Delegate;
 
 use Carnage\Cqrs\Testing\AbstractBusTest;
+use ConferenceTools\Checkin\Domain\Command\Delegate\CheckInDelegate;
 use ConferenceTools\Checkin\Domain\Command\Delegate\RegisterDelegate;
 use ConferenceTools\Checkin\Domain\Command\Delegate\UpdateDelegateInformation;
 use ConferenceTools\Checkin\Domain\CommandHandler\Delegate as DelegateCommandHandler;
+use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateCheckedIn;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateInformationUpdated;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateRegistered;
 use ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo;
@@ -59,5 +61,47 @@ class DelegateTest extends AbstractBusTest
         self::assertInstanceOf(DelegateInformationUpdated::class, $domainMessage);
         self::assertEquals('delid', $domainMessage->getId());
         self::assertSame($delegate, $domainMessage->getDelegateInfo());
+    }
+
+    public function testDelegateCheckIn()
+    {
+        $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
+        $ticket = new Ticket('pid', 'tid');
+
+        $this->given(Delegate::class, 'delid', [
+            new DelegateRegistered('delid', $delegate, $ticket, 'admin@example.com')
+        ]);
+
+        $sut = new DelegateCommandHandler($this->repository, $this->idGenerator);
+        $this->setupLogger($sut);
+
+        $sut->handle(new CheckInDelegate('delid'));
+
+        self::assertCount(1, $this->messageBus->messages);
+        /** @var DelegateCheckedIn $domainMessage */
+        $domainMessage = $this->messageBus->messages[0]->getEvent();
+
+        self::assertInstanceOf(DelegateCheckedIn::class, $domainMessage);
+        self::assertEquals('delid', $domainMessage->getId());
+    }
+
+    public function testDelegateCheckInThrowsException()
+    {
+        $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
+        $ticket = new Ticket('pid', 'tid');
+
+        $this->given(Delegate::class, 'delid', [
+            new DelegateRegistered('delid', $delegate, $ticket, 'admin@example.com'),
+            new DelegateCheckedIn('delid')
+        ]);
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Delegate has already been checked in');
+
+        $sut = new DelegateCommandHandler($this->repository, $this->idGenerator);
+        $this->setupLogger($sut);
+
+        $sut->handle(new CheckInDelegate('delid'));
+
     }
 }

@@ -4,6 +4,7 @@
 namespace ConferenceTools\Checkin\Domain\Model\Delegate;
 
 use Carnage\Cqrs\Aggregate\AbstractAggregate;
+use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateCheckedIn;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateInformationUpdated;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateRegistered;
 use ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo;
@@ -13,6 +14,7 @@ class Delegate extends AbstractAggregate
 {
     private $id;
     private $delegateInfo;
+    private $checkedIn = false;
 
     public function getId()
     {
@@ -45,5 +47,19 @@ class Delegate extends AbstractAggregate
     protected function applyDelegateInformationUpdated(DelegateInformationUpdated $event)
     {
         $this->delegateInfo = $event->getDelegateInfo();
+    }
+
+    public function checkIn()
+    {
+        if ($this->checkedIn) {
+            throw new \DomainException('Delegate has already been checked in');
+        }
+
+        $this->apply(new DelegateCheckedIn($this->id));
+    }
+
+    protected function applyDelegateCheckedIn(DelegateCheckedIn $event)
+    {
+        $this->checkedIn = true;
     }
 }

@@ -5,6 +5,7 @@ namespace ConferenceTools\Checkin\Domain\CommandHandler;
 use Carnage\Cqrs\Aggregate\Identity\GeneratorInterface;
 use Carnage\Cqrs\MessageHandler\AbstractMethodNameMessageHandler;
 use Carnage\Cqrs\Persistence\Repository\RepositoryInterface;
+use ConferenceTools\Checkin\Domain\Command\Delegate\CheckInDelegate;
 use ConferenceTools\Checkin\Domain\Command\Delegate\RegisterDelegate;
 use ConferenceTools\Checkin\Domain\Command\Delegate\UpdateDelegateInformation;
 use ConferenceTools\Checkin\Domain\Model\Delegate\Delegate as DelegateModel;
@@ -26,7 +27,7 @@ class Delegate extends AbstractMethodNameMessageHandler
         $this->repository = $repository;
     }
 
-    protected function handleRegisterDelegate(RegisterDelegate $command)
+    protected function handleRegisterDelegate(RegisterDelegate $command): void
     {
         $delegate = DelegateModel::register(
             $this->idGenerator->generateIdentity(),
@@ -38,10 +39,22 @@ class Delegate extends AbstractMethodNameMessageHandler
         $this->repository->save($delegate);
     }
 
-    protected function handleUpdateDelegateInformation(UpdateDelegateInformation $command)
+    protected function handleUpdateDelegateInformation(UpdateDelegateInformation $command): void
     {
-        $delegate = $this->repository->load($command->getDelegateId());
+        $delegate = $this->loadDelegate($command->getDelegateId());
         $delegate->updateDelegateInformation($command->getDelegateInfo());
         $this->repository->save($delegate);
+    }
+
+    protected function handleCheckInDelegate(CheckInDelegate $command): void
+    {
+        $delegate = $this->loadDelegate($command->getId());
+        $delegate->checkIn();
+        $this->repository->save($delegate);
+    }
+
+    private function loadDelegate(string $delegateId): DelegateModel
+    {
+        return $this->repository->load($delegateId);
     }
 }

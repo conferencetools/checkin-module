@@ -49,6 +49,9 @@ class ImportPurchase extends AbstractAggregate implements NewProcessInterface
         return $this->purchaseId;
     }
 
+    /*
+     * @TODO handle events arriving out of order.
+     */
     public function ticketAssigned(TicketAssigned $event)
     {
         if (!$this->paid) {
