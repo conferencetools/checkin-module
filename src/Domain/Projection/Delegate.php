@@ -4,6 +4,7 @@ namespace ConferenceTools\Checkin\Domain\Projection;
 
 use Carnage\Cqrs\MessageHandler\AbstractMethodNameMessageHandler;
 use Carnage\Cqrs\Persistence\ReadModel\RepositoryInterface;
+use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateCheckedIn;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateInformationUpdated;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateRegistered;
 use ConferenceTools\Checkin\Domain\ReadModel\Delegate as DelegateModel;
@@ -32,11 +33,28 @@ class Delegate extends AbstractMethodNameMessageHandler
 
     protected function handleDelegateInformationUpdated(DelegateInformationUpdated $event)
     {
-        $criteria = Criteria::create();
-        $criteria->where(Criteria::expr()->eq('delegateId', $event->getId()));
-        /** @var DelegateModel $model */
-        $model = $this->repository->matching($criteria)->current();
+        $model = $this->loadDelegate($event->getId());
         $model->updateDelegateInfo($event->getDelegateInfo());
         $this->repository->commit();
+    }
+
+    protected function handleDelegateCheckedIn(DelegateCheckedIn $event)
+    {
+        $model = $this->loadDelegate($event->getId());
+        $model->checkIn();
+        $this->repository->commit();
+    }
+
+    /**
+     * @param string $delegateId
+     * @return DelegateModel
+     */
+    private function loadDelegate(string $delegateId): DelegateModel
+    {
+        $criteria = Criteria::create();
+        $criteria->where(Criteria::expr()->eq('delegateId', $delegateId));
+        /** @var DelegateModel $model */
+        $model = $this->repository->matching($criteria)->current();
+        return $model;
     }
 }

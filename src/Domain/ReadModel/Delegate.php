@@ -25,6 +25,8 @@ class Delegate
      */
     private $purchaserEmail;
 
+    private $checkedIn = false;
+
     public function __construct(string $delegateId, DelegateInfo $delegateInfo, Ticket $ticket, string $purchaserEmail)
     {
         $this->delegateId = $delegateId;
@@ -34,11 +36,6 @@ class Delegate
         $this->purchaseId = $ticket->getPurchaseId();
         $this->ticketId = $ticket->getTicketId();
         $this->purchaserEmail = $purchaserEmail;
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     public function getDelegateId(): string
@@ -81,5 +78,15 @@ class Delegate
         $this->firstName = $delegateInfo->getFirstName();
         $this->lastName = $delegateInfo->getLastName();
         $this->email = $delegateInfo->getEmail();
+    }
+
+    public function checkIn(): void
+    {
+        $this->checkedIn = true;
+    }
+
+    public function checkedIn(): bool
+    {
+        return $this->checkedIn;
     }
 }
