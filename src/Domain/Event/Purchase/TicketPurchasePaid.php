@@ -3,17 +3,18 @@
 namespace ConferenceTools\Checkin\Domain\Event\Purchase;
 
 use Carnage\Cqrs\Event\EventInterface;
-use ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo;
-use ConferenceTools\Checkin\Domain\ValueObject\Ticket;
+use JMS\Serializer\Annotation as JMS;
 
 class TicketPurchasePaid implements EventInterface
 {
     /**
      * @var string
+     * @JMS\Type("string")
      */
     private $purchaseId;
     /**
      * @var string
+     * @JMS\Type("string")
      */
     private $purchaserEmail;
 

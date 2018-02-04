@@ -4,15 +4,19 @@ namespace ConferenceTools\Checkin\Domain\Event\Delegate;
 
 use Carnage\Cqrs\Event\EventInterface;
 use ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo;
+use JMS\Serializer\Annotation as JMS;
 
 class DelegateInformationUpdated implements EventInterface
 {
     /**
      * @var string
+     * @JMS\Type("string")
      */
     private $id;
+
     /**
      * @var DelegateInfo
+     * @JMS\Type("ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo")
      */
     private $delegateInfo;
 

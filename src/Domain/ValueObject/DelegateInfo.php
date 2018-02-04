@@ -1,11 +1,24 @@
 <?php
 
 namespace ConferenceTools\Checkin\Domain\ValueObject;
+use JMS\Serializer\Annotation as JMS;
 
 final class DelegateInfo
 {
+    /**
+     * @var string
+     * @JMS\Type("string")
+     */
     private $firstName;
+    /**
+     * @var string
+     * @JMS\Type("string")
+     */
     private $lastName;
+    /**
+     * @var string
+     * @JMS\Type("string")
+     */
     private $email;
 
     public function __construct(string $firstName, string $lastName, string $email)

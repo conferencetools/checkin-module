@@ -6,23 +6,28 @@ namespace ConferenceTools\Checkin\Domain\Event\Delegate;
 use Carnage\Cqrs\Event\EventInterface;
 use ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo;
 use ConferenceTools\Checkin\Domain\ValueObject\Ticket;
+use JMS\Serializer\Annotation as JMS;
 
 class DelegateRegistered implements EventInterface
 {
     /**
      * @var string
+     * @JMS\Type("string")
      */
     private $delegateId;
     /**
      * @var DelegateInfo
+     * @JMS\Type("ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo")
      */
     private $delegateInfo;
     /**
      * @var Ticket
+     * @JMS\Type("ConferenceTools\Checkin\Domain\ValueObject\Ticket")
      */
     private $ticket;
     /**
      * @var string
+     * @JMS\Type("string")
      */
     private $purchaserEmail;
 
