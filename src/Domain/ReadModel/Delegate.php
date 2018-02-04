@@ -4,27 +4,59 @@ namespace ConferenceTools\Checkin\Domain\ReadModel;
 
 use ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo;
 use ConferenceTools\Checkin\Domain\ValueObject\Ticket;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity()
+ */
 class Delegate
 {
+    /**
+     * @var integer
+     * @ORM\Id
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
+     */
     private $id;
-
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
     private $delegateId;
-
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
     private $firstName;
-
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
     private $lastName;
-
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
     private $email;
-
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
     private $purchaseId;
-
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
     private $ticketId;
     /**
      * @var string
+     * @ORM\Column(type="string")
      */
     private $purchaserEmail;
-
+    /**
+     * @var string
+     * @ORM\Column(type="boolean")
+     */
     private $checkedIn = false;
 
     public function __construct(string $delegateId, DelegateInfo $delegateInfo, Ticket $ticket, string $purchaserEmail)
