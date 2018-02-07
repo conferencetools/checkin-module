@@ -1,0 +1,69 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="/css/card.css">
+        <style>
+            header#header {
+                z-index:1000;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                background-color: #0083c9;
+                box-shadow: 0 0 2px rgba(46,49,65,.8);
+            }
+            header#header img {
+                margin: 0 .75em;
+                padding: 0 .75em;
+                max-width: 300px;
+                height: auto;
+            }
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+                background-color: rgb(78, 161, 206);
+            }
+            .alert {
+                margin-bottom: 10px;
+                margin-top: 10px;
+            }
+        </style>
+
+        <?php echo $this->headLink() ?>
+        <?= $this->googleAnalytics() ?>
+
+        <script src="/js/vendor/modernizr-2.8.3.min.js"></script>
+    </head>
+    <body>
+    <header id="header">
+        <div class="logo"><img src="https://www.phpyorkshire.co.uk/user/themes/phpyorkshire/assets/images/phpyorkshire-logo-inline.png" alt="PHP Yorkshire"></div>
+    </header>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <?php echo $this->flashMessenger()->renderAll();?>
+                <?php echo $this->content ?>
+            </div>
+        </div>
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+    <script src="/js/vendor/bootstrap.min.js"></script>
+
+    <?php echo $this->inlineScript();?>
+    </body>
+</html>

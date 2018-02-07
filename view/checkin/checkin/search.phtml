@@ -1,0 +1,55 @@
+<div class="panel panel-default">
+    <div class="panel-heading display-table credit-card-box" >
+        <div class="row display-tr" >
+            <h3 class="panel-title display-td" >Search</h3>
+            <div class="display-td" ></div>
+        </div>
+    </div>
+    <div class="panel-body" style="padding: 30px">
+        <?php echo $this->form($this->form);?>
+    </div>
+</div>
+<div class="panel panel-default credit-card-box">
+    <div class="panel-heading display-table" >
+        <div class="row display-tr" >
+            <h3 class="panel-title display-td" >Results</h3>
+            <div class="display-td" ></div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped table-hover">
+
+            <thead>
+            <tr>
+                <th>Purchase Email</th>
+                <th>PurchaseId</th>
+                <th>TicketId</th>
+                <th>Name</th>
+                <th>Delegate Email</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($this->results as $delegate):?>
+                    <?php /** @var \ConferenceTools\Checkin\Domain\ReadModel\Delegate $delegate */?>
+                    <tr>
+                        <td><?=$this->escapeHtml($delegate->getPurchaserEmail())?></td>
+                        <td><?=$this->escapeHtml($delegate->getPurchaseId())?></td>
+                        <td><?=$this->escapeHtml($delegate->getTicketId())?></td>
+                        <td><?=$this->escapeHtml($delegate->getFirstName())?> <?=$this->escapeHtml($delegate->getLastName())?></td>
+                        <td><?=$this->escapeHtml($delegate->getEmail())?></td>
+                        <td>
+                            <?php if($delegate->checkedIn()):?>
+                                Checked In
+                            <?php else:?>
+                                <a href="<?=$this->url('checkin/checkin', ['delegateId' => $delegate->getDelegateId()])?>">Check in</a>
+                            <?php endif?>
+                        </td>
+                    </tr>
+                <?php endforeach;?>
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
