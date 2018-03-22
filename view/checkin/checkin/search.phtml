@@ -1,3 +1,20 @@
+<?php
+$this->inlineScript()
+    ->appendFile('/js/instascan.min.js')
+    ->appendFile('/js/readqr.js');
+?>
+<div id="qr" style="display:none" class="panel panel-default">
+    <div class="panel-heading display-table credit-card-box" >
+        <div class="row display-tr" >
+            <h3 class="panel-title display-td" >Scan QR code</h3>
+            <div class="display-td" ></div>
+        </div>
+    </div>
+    <div class="panel-body" style="padding: 30px">
+        <video id="preview" style="display:block; margin:auto"></video>
+    </div>
+</div>
+
 <div class="panel panel-default">
     <div class="panel-heading display-table credit-card-box" >
         <div class="row display-tr" >
