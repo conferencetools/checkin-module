@@ -23,7 +23,7 @@ class ImportPurchaseTest extends AbstractBusTest
 
         $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
         $ticket = new Ticket('pid', 'tid');
-        $message = new TicketAssigned($delegate, $ticket, 'admin@company.com');
+        $message = new TicketAssigned($delegate, $ticket);
         $sut->handle($message);
 
         self::assertCount(1, $this->messageBus->messages);
@@ -53,7 +53,7 @@ class ImportPurchaseTest extends AbstractBusTest
 
         $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
         $ticket = new Ticket('pid', 'tid');
-        $message = new TicketAssigned($delegate, $ticket, 'admin@company.com');
+        $message = new TicketAssigned($delegate, $ticket);
         $sut->handle($message);
 
         $message = new TicketPurchasePaid('pid', 'admin@company.com');
@@ -76,7 +76,7 @@ class ImportPurchaseTest extends AbstractBusTest
 
         $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
         $ticket = new Ticket('pid', 'tid');
-        $message = new TicketAssigned($delegate, $ticket, 'admin@company.com');
+        $message = new TicketAssigned($delegate, $ticket);
         $sut->handle($message);
 
         $message = new TicketPurchasePaid('pid', 'admin@company.com');
@@ -86,7 +86,7 @@ class ImportPurchaseTest extends AbstractBusTest
 
         $delegate = new DelegateInfo('ben', 'franks', 'ben.franks@gmail.com');
         $ticket = new Ticket('pid', 'tid');
-        $message = new TicketAssigned($delegate, $ticket, 'admin@company.com');
+        $message = new TicketAssigned($delegate, $ticket);
         $sut->handle($message);
 
         self::assertCount(5, $this->messageBus->messages);

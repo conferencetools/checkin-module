@@ -58,12 +58,16 @@ class ImportPurchase extends AbstractAggregate implements NewProcessInterface
             $this->apply($event);
         } else {
             $ticket = $event->getTicket();
-            $this->apply(
-                new UpdateDelegateInformation(
-                    $this->delegates[$ticket->getPurchaseId()][$ticket->getTicketId()],
-                    $event->getDelegateInfo()
-                )
-            );
+            if (isset($this->delegates[$ticket->getPurchaseId()][$ticket->getTicketId()])) {
+                $this->apply(
+                    new UpdateDelegateInformation(
+                        $this->delegates[$ticket->getPurchaseId()][$ticket->getTicketId()],
+                        $event->getDelegateInfo()
+                    )
+                );
+            } else {
+                $this->apply(new RegisterDelegate($event->getDelegateInfo(), $ticket, $this->purchaserEmail));
+            }
         }
     }
 
