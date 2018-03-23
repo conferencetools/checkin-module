@@ -69,6 +69,29 @@ class ImportPurchaseTest extends AbstractBusTest
         self::assertEquals($expected, $domainMessage);
     }
 
+    public function testPurchasePaidAndTicketAssignedRegistersADelegate()
+    {
+        $sut = new ImportPurchaseProcessManager($this->repository);
+        $this->setupLogger($sut);
+
+        $message = new TicketPurchasePaid('pid', 'admin@company.com');
+        $sut->handle($message);
+
+        $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
+        $ticket = new Ticket('pid', 'tid');
+        $message = new TicketAssigned($delegate, $ticket);
+        $sut->handle($message);
+
+        self::assertCount(3, $this->messageBus->messages);
+        $domainMessage = $this->messageBus->messages[2]->getEvent();
+
+        $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
+        $ticket = new Ticket('pid', 'tid');
+        $expected = new RegisterDelegate($delegate, $ticket, 'admin@company.com');
+
+        self::assertEquals($expected, $domainMessage);
+    }
+
     public function testUpdateDelegateInfo()
     {
         $sut = new ImportPurchaseProcessManager($this->repository);
