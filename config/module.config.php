@@ -14,6 +14,8 @@ return [
     ],
     'cli_commands' => [
         'factories' => [
+            \ConferenceTools\Checkin\Cli\Command\GenerateQR::class =>
+                \ConferenceTools\Checkin\Cli\Command\GenerateQRFactory::class
         ],
     ],
     'command_handlers' => [
