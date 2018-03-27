@@ -1,5 +1,15 @@
 <?php
 
+use ConferenceTools\Checkin\AntiCorruption;
+use ConferenceTools\Checkin\Cli\Command as CliCommand;
+use ConferenceTools\Checkin\Controller;
+use ConferenceTools\Checkin\Domain\Command;
+use ConferenceTools\Checkin\Domain\CommandHandler;
+use ConferenceTools\Checkin\Domain\Event;
+use ConferenceTools\Checkin\Domain\ProcessManager;
+use ConferenceTools\Checkin\Domain\Projection;
+use ConferenceTools\Checkin\Service\Factory;
+
 return [
     'router' => [
         'routes' => require __DIR__ . '/routes.config.php',
@@ -14,73 +24,64 @@ return [
     ],
     'cli_commands' => [
         'factories' => [
-            \ConferenceTools\Checkin\Cli\Command\GenerateQR::class =>
-                \ConferenceTools\Checkin\Cli\Command\GenerateQRFactory::class
+            CliCommand\GenerateQR::class => CliCommand\GenerateQRFactory::class,
         ],
     ],
     'command_handlers' => [
         'factories' => [
-            \ConferenceTools\Checkin\Domain\CommandHandler\Delegate::class =>
-                \ConferenceTools\Checkin\Service\Factory\CommandHandler\Delegate::class
+            CommandHandler\Delegate::class => Factory\CommandHandler\Delegate::class
         ],
     ],
     'process_managers' => [
         'factories' => [
-            \ConferenceTools\Checkin\Domain\ProcessManager\ImportPurchase::class =>
-                \ConferenceTools\Checkin\Service\Factory\ProcessManager\ImportPurchase::class,
+            ProcessManager\ImportPurchase::class => Factory\ProcessManager\ImportPurchase::class,
         ],
     ],
     'command_subscriptions' => [
-        \ConferenceTools\Checkin\Domain\Command\Delegate\CheckInDelegate::class =>
-            \ConferenceTools\Checkin\Domain\CommandHandler\Delegate::class,
-        \ConferenceTools\Checkin\Domain\Command\Delegate\RegisterDelegate::class =>
-            \ConferenceTools\Checkin\Domain\CommandHandler\Delegate::class,
-        \ConferenceTools\Checkin\Domain\Command\Delegate\UpdateDelegateInformation::class =>
-            \ConferenceTools\Checkin\Domain\CommandHandler\Delegate::class,
+        Command\Delegate\CheckInDelegate::class => CommandHandler\Delegate::class,
+        Command\Delegate\RegisterDelegate::class => CommandHandler\Delegate::class,
+        Command\Delegate\UpdateDelegateInformation::class => CommandHandler\Delegate::class,
     ],
     'event_listeners' => [
         'factories' => [
-            \ConferenceTools\Checkin\AntiCorruption\TicketMappingListener::class =>
-                \ConferenceTools\Checkin\AntiCorruption\TicketMappingListenerFactory::class
+            AntiCorruption\TicketMappingListener::class => AntiCorruption\TicketMappingListenerFactory::class
         ],
     ],
     'projections' => [
         'factories' => [
-            \ConferenceTools\Checkin\Domain\Projection\Delegate::class =>
-                \ConferenceTools\Checkin\Service\Factory\Projection\Delegate::class,
+            Projection\Delegate::class => Factory\Projection\Delegate::class,
         ],
     ],
     'domain_event_subscriptions' => [
-        \ConferenceTools\Checkin\Domain\Event\Delegate\DelegateCheckedIn::class => [
-            \ConferenceTools\Checkin\Domain\Projection\Delegate::class,
+        Event\Delegate\DelegateCheckedIn::class => [
+            Projection\Delegate::class,
         ],
-        \ConferenceTools\Checkin\Domain\Event\Delegate\DelegateInformationUpdated::class => [
-            \ConferenceTools\Checkin\Domain\Projection\Delegate::class,
+        Event\Delegate\DelegateInformationUpdated::class => [
+            Projection\Delegate::class,
         ],
-        \ConferenceTools\Checkin\Domain\Event\Delegate\DelegateRegistered::class => [
-            \ConferenceTools\Checkin\Domain\Projection\Delegate::class,
-            \ConferenceTools\Checkin\Domain\ProcessManager\ImportPurchase::class,
+        Event\Delegate\DelegateRegistered::class => [
+            Projection\Delegate::class,
+            ProcessManager\ImportPurchase::class,
         ],
 
-        \ConferenceTools\Checkin\Domain\Event\Purchase\TicketPurchasePaid::class => [
-            \ConferenceTools\Checkin\Domain\ProcessManager\ImportPurchase::class,
+        Event\Purchase\TicketPurchasePaid::class => [
+            ProcessManager\ImportPurchase::class,
         ],
-        \ConferenceTools\Checkin\Domain\Event\Purchase\TicketAssigned::class => [
-            \ConferenceTools\Checkin\Domain\ProcessManager\ImportPurchase::class,
+        Event\Purchase\TicketAssigned::class => [
+            ProcessManager\ImportPurchase::class,
         ],
 
         // EXTERNAL EVENTS
         \ConferenceTools\Tickets\Domain\Event\Ticket\TicketPurchasePaid::class => [
-            \ConferenceTools\Checkin\AntiCorruption\TicketMappingListener::class,
+            AntiCorruption\TicketMappingListener::class,
         ],
         \ConferenceTools\Tickets\Domain\Event\Ticket\TicketAssigned::class => [
-            \ConferenceTools\Checkin\AntiCorruption\TicketMappingListener::class,
+            AntiCorruption\TicketMappingListener::class,
         ],
     ],
     'controllers' => [
         'factories' => [
-            \ConferenceTools\Checkin\Controller\CheckInController::class =>
-                \ConferenceTools\Checkin\Controller\CheckInControllerFactory::class
+            Controller\CheckInController::class => Controller\CheckInControllerFactory::class
         ],
     ],
     'form_elements' => [
