@@ -7,6 +7,7 @@ use ConferenceTools\Checkin\Domain\Command\Delegate\RegisterDelegate;
 use ConferenceTools\Checkin\Domain\Command\Delegate\UpdateDelegateInformation;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateRegistered;
 use ConferenceTools\Checkin\Domain\Event\Purchase\TicketAssigned;
+use ConferenceTools\Checkin\Domain\Event\Purchase\TicketCreated;
 use ConferenceTools\Checkin\Domain\Event\Purchase\TicketPurchasePaid;
 use ConferenceTools\Checkin\Domain\ProcessManager\ImportPurchase as ImportPurchaseProcessManager;
 use ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo;
@@ -15,86 +16,103 @@ use ConferenceTools\Checkin\Domain\ValueObject\Ticket;
 class ImportPurchaseTest extends AbstractBusTest
 {
     protected $modelClass = ImportPurchase::class;
+    private $delegates;
+    private $ticket;
+    private $events;
+    private $commands;
 
-    public function testTicketAssignedProducesNoCommands()
+    public function __construct(string $name = null, array $data = [], string $dataName = '')
     {
-        $sut = new ImportPurchaseProcessManager($this->repository);
-        $this->setupLogger($sut);
+        parent::__construct($name, $data, $dataName);
 
-        $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
-        $ticket = new Ticket('pid', 'tid');
-        $message = new TicketAssigned($delegate, $ticket, 'admin@company.com');
-        $sut->handle($message);
+        $this->delegates['ted banks'] = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
+        $this->delegates['ben franks'] = new DelegateInfo('ben', 'franks', 'ben.franks@gmail.com');
+        $this->delegates['placeholder'] = new DelegateInfo('', '', '');
+        $this->ticket = new Ticket('pid', 'tid');
 
-        self::assertCount(1, $this->messageBus->messages);
-        $domainMessage = $this->messageBus->messages[0]->getEvent();
+        $this->events['assigned to ted banks'] =  new TicketAssigned($this->delegates['ted banks'], $this->ticket);
+        $this->events['purchase paid by admin'] = new TicketPurchasePaid('pid', 'admin@company.com');
+        $this->events['ted banks registered'] = new DelegateRegistered('did', $this->delegates['ted banks'], $this->ticket, 'admin@company.com');
+        $this->events['placeholder delegate registered'] = new DelegateRegistered('did', $this->delegates['placeholder'], $this->ticket, 'admin@company.com');
+        $this->events['assigned to ben franks'] =  new TicketAssigned($this->delegates['ben franks'], $this->ticket);
+        $this->events['ticket created'] = new TicketCreated($this->ticket);
 
-        self::assertSame($message, $domainMessage);
+        $this->commands['register delegate ted banks'] = new RegisterDelegate($this->delegates['ted banks'], $this->ticket, 'admin@company.com');
+        $this->commands['register placeholder delegate'] = new RegisterDelegate($this->delegates['placeholder'], $this->ticket, 'admin@company.com');
+        $this->commands['update delegate ben franks'] = new UpdateDelegateInformation('did', $this->delegates['ben franks']);
     }
 
-    public function testTicketPurchasePaidProducesNoCommands()
+    /**
+     * @dataProvider provideTestProcess
+     * @param array $given
+     * @param $when
+     * @param int $expectedCount
+     * @param array $expect
+     */
+    public function testProcess(array $given, $when, int $expectedCount, array $expect)
     {
         $sut = new ImportPurchaseProcessManager($this->repository);
         $this->setupLogger($sut);
 
-        $message = new TicketPurchasePaid('pid', 'admin@company.com');
-        $sut->handle($message);
+        foreach ($given as $message) {
+            $sut->handle($message);
+        }
 
-        self::assertCount(1, $this->messageBus->messages);
-        $domainMessage = $this->messageBus->messages[0]->getEvent();
+        $sut->handle($when);
 
-        self::assertSame($message, $domainMessage);
+        self::assertCount($expectedCount, $this->messageBus->messages);
+
+        $startFrom = count($this->messageBus->messages) - count($expect);
+        foreach ($expect as $index => $expected) {
+            self::assertEquals($expected, $this->messageBus->messages[$startFrom + $index]->getEvent());
+        }
     }
 
-    public function testTicketAssignedAndPurchasePaidRegistersADelegate()
+    public function provideTestProcess()
     {
-        $sut = new ImportPurchaseProcessManager($this->repository);
-        $this->setupLogger($sut);
-
-        $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
-        $ticket = new Ticket('pid', 'tid');
-        $message = new TicketAssigned($delegate, $ticket, 'admin@company.com');
-        $sut->handle($message);
-
-        $message = new TicketPurchasePaid('pid', 'admin@company.com');
-        $sut->handle($message);
-
-        self::assertCount(3, $this->messageBus->messages);
-        $domainMessage = $this->messageBus->messages[2]->getEvent();
-
-        $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
-        $ticket = new Ticket('pid', 'tid');
-        $expected = new RegisterDelegate($delegate, $ticket, 'admin@company.com');
-
-        self::assertEquals($expected, $domainMessage);
-    }
-
-    public function testUpdateDelegateInfo()
-    {
-        $sut = new ImportPurchaseProcessManager($this->repository);
-        $this->setupLogger($sut);
-
-        $delegate = new DelegateInfo('ted', 'banks', 'ted.banks@gmail.com');
-        $ticket = new Ticket('pid', 'tid');
-        $message = new TicketAssigned($delegate, $ticket, 'admin@company.com');
-        $sut->handle($message);
-
-        $message = new TicketPurchasePaid('pid', 'admin@company.com');
-        $sut->handle($message);
-
-        $sut->handle(new DelegateRegistered('did', $delegate, $ticket, 'admin@company.com'));
-
-        $delegate = new DelegateInfo('ben', 'franks', 'ben.franks@gmail.com');
-        $ticket = new Ticket('pid', 'tid');
-        $message = new TicketAssigned($delegate, $ticket, 'admin@company.com');
-        $sut->handle($message);
-
-        self::assertCount(5, $this->messageBus->messages);
-        $domainMessage = $this->messageBus->messages[4]->getEvent();
-
-        $delegate = new DelegateInfo('ben', 'franks', 'ben.franks@gmail.com');
-        $expected = new UpdateDelegateInformation('did', $delegate);
-
-        self::assertEquals($expected, $domainMessage);
+        return [
+            'when a ticket is assigned do nothing' => [
+                [],
+                $this->events['assigned to ted banks'],
+                1,
+                []
+            ],
+            'when a purchase is paid do nothing' => [
+                [],
+                $this->events['purchase paid by admin'],
+                1,
+                []
+            ],
+            'when a ticket is created, do nothing' => [
+                [],
+                $this->events['ticket created'],
+                1,
+                []
+            ],
+            'when a ticket has been assigned and a purchase is paid, register a delegate' => [
+                [$this->events['assigned to ted banks']],
+                $this->events['purchase paid by admin'],
+                3,
+                [$this->commands['register delegate ted banks']]
+            ],
+            'when a ticket is created and has been paid, register a place holder delegate' => [
+                [$this->events['ticket created']],
+                $this->events['purchase paid by admin'],
+                3,
+                [$this->commands['register placeholder delegate']]
+            ],
+            'when a placeholder delegate has been registered and details are provided, update the delegate' => [
+                [$this->events['ticket created'], $this->events['purchase paid by admin'], $this->events['placeholder delegate registered']],
+                $this->events['assigned to ben franks'],
+                5,
+                [$this->commands['update delegate ben franks']]
+            ],
+            'when a delegate has been registered and their information is changed, update the delegate' => [
+                [$this->events['assigned to ted banks'], $this->events['purchase paid by admin'], $this->events['ted banks registered']],
+                $this->events['assigned to ben franks'],
+                5,
+                [$this->commands['update delegate ben franks']]
+            ]
+        ];
     }
 }
