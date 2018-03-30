@@ -46,6 +46,10 @@ class TicketMappingListener extends AbstractMethodNameMessageHandler
 
     protected function handleTicketReserved($event): void
     {
+        if ($event->getTicketType()->isSupplementary()) {
+            return;
+        }
+        
         $mappedEvent = new TicketCreated(new Ticket($event->getPurchaseId(), $event->getId()));
         $this->eventBus->dispatch($mappedEvent);
     }
