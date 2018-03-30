@@ -7,6 +7,7 @@ use Carnage\Cqrs\Persistence\EventStore\NotFoundException;
 use Carnage\Cqrs\Persistence\Repository\RepositoryInterface;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateRegistered;
 use ConferenceTools\Checkin\Domain\Event\Purchase\TicketAssigned;
+use ConferenceTools\Checkin\Domain\Event\Purchase\TicketCreated;
 use ConferenceTools\Checkin\Domain\Event\Purchase\TicketPurchasePaid;
 use ConferenceTools\Checkin\Domain\Process\ImportPurchase as ImportPurchaseProcess;
 
@@ -17,6 +18,13 @@ class ImportPurchase extends AbstractMethodNameMessageHandler
     public function __construct(RepositoryInterface $repository)
     {
         $this->repository = $repository;
+    }
+
+    protected function handleTicketCreated(TicketCreated $event)
+    {
+        $process = $this->loadProcess($event->getTicket()->getPurchaseId());
+        $process->ticketCreated($event);
+        $this->repository->save($process);
     }
 
     protected function handleTicketAssigned(TicketAssigned $event)

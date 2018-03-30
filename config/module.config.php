@@ -70,6 +70,9 @@ return [
         Event\Purchase\TicketAssigned::class => [
             ProcessManager\ImportPurchase::class,
         ],
+        \ConferenceTools\Checkin\Domain\Event\Purchase\TicketCreated::class => [
+            \ConferenceTools\Checkin\Domain\ProcessManager\ImportPurchase::class,
+        ],
 
         // EXTERNAL EVENTS
         \ConferenceTools\Tickets\Domain\Event\Ticket\TicketPurchasePaid::class => [
@@ -77,6 +80,9 @@ return [
         ],
         \ConferenceTools\Tickets\Domain\Event\Ticket\TicketAssigned::class => [
             AntiCorruption\TicketMappingListener::class,
+        ],
+        \ConferenceTools\Tickets\Domain\Event\Ticket\TicketReserved::class => [
+            \ConferenceTools\Checkin\AntiCorruption\TicketMappingListener::class,
         ],
     ],
     'controllers' => [

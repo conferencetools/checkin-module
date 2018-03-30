@@ -8,7 +8,9 @@ use ConferenceTools\Checkin\Domain\Command\Delegate\RegisterDelegate;
 use ConferenceTools\Checkin\Domain\Command\Delegate\UpdateDelegateInformation;
 use ConferenceTools\Checkin\Domain\Event\Delegate\DelegateRegistered;
 use ConferenceTools\Checkin\Domain\Event\Purchase\TicketAssigned;
+use ConferenceTools\Checkin\Domain\Event\Purchase\TicketCreated;
 use ConferenceTools\Checkin\Domain\Event\Purchase\TicketPurchasePaid;
+use ConferenceTools\Checkin\Domain\ValueObject\DelegateInfo;
 
 class ImportPurchase extends AbstractAggregate implements NewProcessInterface
 {
@@ -75,7 +77,17 @@ class ImportPurchase extends AbstractAggregate implements NewProcessInterface
     protected function applyTicketAssigned(TicketAssigned $event)
     {
         $this->purchaseId = $event->getTicket()->getPurchaseId();
-        $this->tickets[] = $event;
+        $this->tickets[$event->getTicket()->getTicketId()] = $event;
+    }
+
+    public function ticketCreated(TicketCreated $event)
+    {
+        $this->apply($event);
+    }
+
+    protected function applyTicketCreated(TicketCreated $event)
+    {
+        $this->tickets[$event->getTicket()->getTicketId()] = $event;
     }
 
     public function ticketPurchasePaid(TicketPurchasePaid $event)
@@ -83,7 +95,12 @@ class ImportPurchase extends AbstractAggregate implements NewProcessInterface
         $this->apply($event);
 
         foreach ($this->tickets as $ticket) {
-            $this->apply(new RegisterDelegate($ticket->getDelegateInfo(), $ticket->getTicket(), $this->purchaserEmail));
+            if ($ticket instanceof TicketAssigned) {
+                $this->apply(new RegisterDelegate($ticket->getDelegateInfo(), $ticket->getTicket(), $this->purchaserEmail));
+            } else {
+                $delegate = new DelegateInfo('', '', '');
+                $this->apply(new RegisterDelegate($delegate, $ticket->getTicket(), $this->purchaserEmail));
+            }
         }
     }
 
