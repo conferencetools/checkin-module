@@ -25,6 +25,7 @@ return [
     'cli_commands' => [
         'factories' => [
             CliCommand\GenerateQR::class => CliCommand\GenerateQRFactory::class,
+            CliCommand\ImportExistingTickets::class => CliCommand\ImportExistingTicketsFactory::class,
         ],
     ],
     'command_handlers' => [
