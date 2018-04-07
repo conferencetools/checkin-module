@@ -2,25 +2,31 @@
 
 return [
     'checkin' => [
-        'type' => 'Segment',
+        'type' => \Zend\Mvc\Router\Http\Literal::class,
         'options' => [
-            'route' => '/',
-            'defaults' => [
-                'controller' => \ConferenceTools\Checkin\Controller\CheckInController::class,
-                'action' => 'search',
-            ],
+            'route' => ''
         ],
-        'may_terminate' => true,
-        'child_routes' => [
+        'child_routes' =>[
+            'search' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '[/]',
+                    'defaults' => [
+                        'controller' => \ConferenceTools\Checkin\Controller\CheckInController::class,
+                        'action' => 'search',
+                    ],
+                ],
+            ],
             'checkin' => [
                 'type' => 'Segment',
                 'options' => [
-                    'route' => 'checkin/:delegateId',
+                    'route' => '/checkin/:delegateId',
                     'defaults' => [
+                        'controller' => \ConferenceTools\Checkin\Controller\CheckInController::class,
                         'action' => 'checkin',
                     ],
                 ],
             ],
-        ],
-    ],
+        ]
+    ]
 ];
