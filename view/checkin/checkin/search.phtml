@@ -4,10 +4,10 @@ $this->inlineScript()
     ->appendFile('/js/readqr.js');
 ?>
 <div id="qr" style="display:none" class="panel panel-default">
-    <div class="panel-heading display-table credit-card-box" >
-        <div class="row display-tr" >
-            <h3 class="panel-title display-td" >Scan QR code</h3>
-            <div class="display-td" ></div>
+    <div class="panel-heading display-table credit-card-box">
+        <div class="row display-tr">
+            <h3 class="panel-title display-td">Scan QR code</h3>
+            <div class="display-td"></div>
         </div>
     </div>
     <div class="panel-body" style="padding: 30px">
@@ -59,7 +59,7 @@ $this->inlineScript()
                             <?php if($delegate->checkedIn()):?>
                                 Checked In
                             <?php else:?>
-                                <a href="<?=$this->url('checkin/checkin', ['delegateId' => $delegate->getDelegateId()])?>">Check in</a>
+                                <a href="<?=$this->url('checkin/checkin', ['delegateId' => $delegate->getDelegateId()], ['force_canonical' => true])?>">Check in</a>
                             <?php endif?>
                         </td>
                     </tr>

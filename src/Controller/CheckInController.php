@@ -69,6 +69,7 @@ class CheckInController extends AbstractActionController
             $this->flashMessenger()->addErrorMessage($e->getMessage());
         }
 
-        return $this->redirect()->toRoute('checkin');
+
+        return $this->redirect()->toRoute('checkin/search', [], ['force_canonical' => true]);
     }
 }
