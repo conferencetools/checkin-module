@@ -6,8 +6,14 @@ $this->inlineScript()
 <div id="qr" style="display:none" class="panel panel-default">
     <div class="panel-heading display-table credit-card-box">
         <div class="row display-tr">
-            <h3 class="panel-title display-td">Scan QR code</h3>
-            <div class="display-td"></div>
+            <h3 class="panel-title display-td">Scan QR code </h3>
+            <div class="display-td">
+                <div class="btn-group-sm">
+                <button id="qr-stop" class="btn btn-danger glyphicon glyphicon-off"></button>
+                <button id="qr-start" class="btn btn-success glyphicon glyphicon-off"></button>
+                <button id="qr-switch-camera" class="btn btn-default glyphicon glyphicon-refresh"></button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="panel-body" style="padding: 30px">
